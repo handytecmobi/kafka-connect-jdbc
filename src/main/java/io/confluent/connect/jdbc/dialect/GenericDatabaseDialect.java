@@ -481,7 +481,9 @@ public class GenericDatabaseDialect implements DatabaseDialect {
       log.debug("executing query " + query + " to get current time from database");
       try (ResultSet rs = stmt.executeQuery(query)) {
         if (rs.next()) {
-          return rs.getTimestamp(1, cal);
+          Timestamp tmst = new Timestamp(rs.getDate(1,cal).getTime());
+          log.info("Fecha Consultada: ",tmst);
+          return tmst;
         } else {
           throw new ConnectException(
               "Unable to get current time from DB using " + this + " and query '" + query + "'"
@@ -500,7 +502,7 @@ public class GenericDatabaseDialect implements DatabaseDialect {
    * @return the query string; never null or empty
    */
   protected String currentTimestampDatabaseQuery() {
-    return "SELECT CURRENT_TIMESTAMP";
+    return "SELECT CURDATE() FROM SYSIBM.SYSDUMMY1";
   }
 
   @Override
